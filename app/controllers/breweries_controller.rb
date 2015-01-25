@@ -83,6 +83,7 @@ class BreweriesController < ApplicationController
       else
         false
       #username == "admin" and password == "secret"
+      end
     end
   end
 end
