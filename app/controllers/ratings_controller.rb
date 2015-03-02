@@ -1,6 +1,11 @@
 class RatingsController < ApplicationController
   def index
-    @ratings = Rating.all
+    @breweries = Brewery.top(3)
+    @beers = Beer.top(3)
+    @styles = Style.top(3)
+    @users = User.most_active(5)
+
+    @ratings = Rating.recent
   end
 
   def new
@@ -9,14 +14,12 @@ class RatingsController < ApplicationController
   end
 
   def create
-    @rating = Rating.create params.require(:rating).permit(:score, :beer_id)
-    #Rating.create params.require(:rating).permit(:score, :beer_id)
-    #session[:last_rating] = "#{rating.beer.name} #{rating.score} points"
-    #redirect_to ratings_path
-    #current_user.ratings << rating
-    #redirect_to current_user
-    if @rating.save
-      current_user.ratings << @rating
+    @rating = Rating.new params.require(:rating).permit(:score, :beer_id)
+
+    if current_user.nil?
+      redirect_to signin_path, notice:'you should be signed in'
+    elsif @rating.save
+      current_user.ratings << @rating  ## virheen aiheuttanut rivi
       redirect_to user_path current_user
     else
       @beers = Beer.all
@@ -27,8 +30,6 @@ class RatingsController < ApplicationController
   def destroy
     rating = Rating.find(params[:id])
     rating.delete if current_user == rating.user
-   # redirect_to ratings_path
     redirect_to :back
   end
-
 end

@@ -1,27 +1,18 @@
 class Brewery < ActiveRecord::Base
-  include AverageRating
-	has_many :beers, dependent: :destroy
-  has_many :ratings, through: :beers
+  include RatingAverage
+
   validates :name, presence: true
-  validates :year, numericality: { greater_than_or_equal_to: 1042,
-                                   less_than_or_equal_to: 2015,
-                                   only_integer: true }
+  validates :year, numericality: { greater_than_or_equal_to: 1024,
+                                   less_than_or_equal_to: ->(_){Time.now.year} }
 
-  def print_report
-    puts name
-    puts "established at year #{year}"
-    puts "number of beers #{beers.count}"
+  scope :active, -> { where active:true }
+  scope :retired, -> { where active:[nil,false] }
+
+  has_many :beers, dependent: :destroy
+  has_many :ratings, through: :beers
+
+  def self.top(n)
+    sorted_by_rating_in_desc_order = Brewery.all.sort_by{ |b| -(b.average_rating||0) }
+    sorted_by_rating_in_desc_order[0..(n-1)]
   end
-
-  def restart
-    self.year = 2015
-    puts "changed year to #{year}"
-  end
-
- # def average_rating
- #   ar = 0
- #   ratings.map { |r| ar = ar+r.score}
- #   ar/ratings.count
- # end
-
 end

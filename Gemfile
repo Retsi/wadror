@@ -47,4 +47,33 @@ group :production do
      gem 'rails_12factor'
 end
 
+group :development, :test do
+  gem 'rspec-rails', '~> 3.1'
+  gem 'rspec-its'
+end
+
+
+group :test do
+  gem 'factory_girl_rails'
+  gem 'capybara'
+  gem 'launchy'
+  gem 'simplecov', require: false
+  gem 'webmock'
+end
+
+gem 'httparty'
+
+gem 'bootstrap-sass'
+group :development do
+  gem 'rails_layout'
+end
+
+gem 'jquery-turbolinks'
+
+gem 'selenium-webdriver'
+
+gem 'database_cleaner'
+
+gem 'rack-mini-profiler'
+
 ruby '2.1.2'
